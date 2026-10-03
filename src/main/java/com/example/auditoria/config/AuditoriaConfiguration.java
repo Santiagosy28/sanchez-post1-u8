@@ -44,4 +44,9 @@ public class AuditoriaConfiguration {
     public ConsultarHistorialUseCase consultarHistorialUseCase(HistorialAuditoriaPort historial) {
         return new ConsultarHistorialService(historial);
     }
+
+    @Bean
+    public ObtenerDashboardAuditoriaUseCase obtenerDashboardAuditoriaUseCase(HallazgoRepositoryPort repo) {
+        return new ObtenerDashboardAuditoriaService(repo);
+    }
 }
