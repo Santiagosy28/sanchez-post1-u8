@@ -5,6 +5,8 @@ import com.example.auditoria.adapter.in.web.dto.ReabrirRequest;
 import com.example.auditoria.adapter.in.web.dto.RegistrarHallazgoRequest;
 import com.example.auditoria.domain.valueobject.HallazgoId;
 import com.example.auditoria.usecase.*;
+import com.example.auditoria.usecase.port.CambioEstadoView;
+import com.example.auditoria.usecase.port.DashboardAuditoriaView;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,17 +24,23 @@ public class HallazgoController {
     private final CerrarHallazgoUseCase cerrarUseCase;
     private final ReabrirHallazgoUseCase reabrirUseCase;
     private final ConsultarHallazgoUseCase consultarUseCase;
+    private final ObtenerDashboardAuditoriaUseCase dashboardUseCase;
+    private final ConsultarHistorialUseCase consultarHistorialUseCase;
 
     public HallazgoController(RegistrarHallazgoUseCase registrarUseCase,
                              IniciarRemediacionUseCase iniciarRemediacionUseCase,
                              CerrarHallazgoUseCase cerrarUseCase,
                              ReabrirHallazgoUseCase reabrirUseCase,
-                             ConsultarHallazgoUseCase consultarUseCase) {
+                             ConsultarHallazgoUseCase consultarUseCase,
+                             ObtenerDashboardAuditoriaUseCase dashboardUseCase,
+                             ConsultarHistorialUseCase consultarHistorialUseCase) {
         this.registrarUseCase = registrarUseCase;
         this.iniciarRemediacionUseCase = iniciarRemediacionUseCase;
         this.cerrarUseCase = cerrarUseCase;
         this.reabrirUseCase = reabrirUseCase;
         this.consultarUseCase = consultarUseCase;
+        this.dashboardUseCase = dashboardUseCase;
+        this.consultarHistorialUseCase = consultarHistorialUseCase;
     }
 
     @PostMapping
@@ -71,5 +79,15 @@ public class HallazgoController {
     @GetMapping
     public List<HallazgoResponse> listar() {
         return consultarUseCase.listarTodos();
+    }
+
+    @GetMapping("/dashboard")
+    public DashboardAuditoriaView dashboard() {
+        return dashboardUseCase.ejecutar();
+    }
+
+    @GetMapping("/{id}/historial")
+    public List<CambioEstadoView> historial(@PathVariable String id) {
+        return consultarHistorialUseCase.ejecutar(new HallazgoId(UUID.fromString(id)));
     }
 }
